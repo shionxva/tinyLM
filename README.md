@@ -15,7 +15,7 @@ pip install -r requirements.txt
 # How it works?
 
 ## Tokenizer
-- This is a reprocessing layer that simply split text by white space and assign it with an interger IDs
+- This is a preprocessing layer that simply split text by white space and assign it with an interger IDs
 
 - `output_sequence_length=CONTEXT_WIN` : apply "0" padding so that every seqs are the same length (20 in this case)
 
@@ -28,6 +28,7 @@ slicing the last word for input and last word for output
 *overall it shows how many choises is the model confused between*
 - `crossentropy(true,pred)` cross entropy loss with true_labels predicted value
 - then `perplexity` = e^`crossentropy`
+lower perplexity means less confusion = better predictions.
 
 ## Token Position Embedding
 Once the text is tokenized, each token needs to be represented in a way that captures not just the token but also its meaning and position (relation to other tokens)
@@ -44,8 +45,14 @@ Output:           [v4+p0, v27+p1, v13+p2]
 ## Transformer blocks
 Overall structure:
 ```
-Input -> Multi-head attention -> Add Residual -> LayerNorm 
--> Feed Forward ->Add Residual -> LayerNorm -> Output
+Input 
+-> Multi-Head Attention 
+-> Add (Residual) 
+-> LayerNorm 
+-> Feed Forward 
+-> Add (Residual) 
+-> LayerNorm 
+-> Output
 ```
 - `multi-head attention`: each head works on an equal slice of the embedding.
 
@@ -53,7 +60,7 @@ Input -> Multi-head attention -> Add Residual -> LayerNorm
 
 It first expands the dimension to feed_forward, applies ReLU, then squishes back down to embed_dim
 
-- `layer norm and dropout`: norm stabilizes training and dropout randomly zeros out 10% of values during training to prevent overfitting.
+- `layer norm + dropout`: norm stabilizes training and dropout randomly zeros out 10% of values during training to prevent overfitting.
 
 *notes: self-attention is basically seeing how other words are relevant to the current word*
 
@@ -61,7 +68,7 @@ It first expands the dimension to feed_forward, applies ReLU, then squishes back
 
 Now we put everything into this `miniLM` class + a text generation function
 
-a little overview of our smoll brain:
+a little overview of our smoll brain components:
 - `embedding layer` converts token IDs into vectors
 - `transformer blocks` to process the sequence
 - `dense out` gives us the logits or "score" for each word in the vocab
@@ -73,7 +80,8 @@ text generation process:
   - run the model -> get logits and apply temperature
   - apply top_k to get the top k-th prediction
   - softmax to convert in into probability
-  -> randomly pick a word
+  - randomly sample the next word
+    -> repeat
 
 # Resources and references
 I learned this from @lachinemearning.com on tiktok and also wanted to try to make this dumb AI.
