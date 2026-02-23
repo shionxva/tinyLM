@@ -42,7 +42,7 @@ Output:           [v4+p0, v27+p1, v13+p2]
 ```
 
 ## Transformer blocks
-Overall tructure:
+Overall structure:
 ```
 Input -> Multi-head attention -> Add Residual -> LayerNorm 
 -> Feed Forward ->Add Residual -> LayerNorm -> Output
